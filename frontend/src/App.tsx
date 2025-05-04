@@ -8,19 +8,18 @@ type Transaction = {
   transaction_id: string;
   version: string; 
   merchant: string;
+  raw_message: string;
 };
 
 function App() {
-
-  const [message, setMessage] = useState("")
-
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([])
   const [newTransaction, setNewTransaction] = useState("")
   const [lastTransaction, setLastTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/v1/transaction")
       .then((res) => res.json())
-      .then((data) => setMessage(data.message))
+      .then((data) => setAllTransactions(data))
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,6 +38,7 @@ function App() {
 
       if (res.ok) {
         setLastTransaction(data.last_transaction)
+        setAllTransactions([data.last_transaction, ...allTransactions])
         setNewTransaction("")
       } else {
         alert("Transaction does not follow template specifications, please try again.")
@@ -48,8 +48,6 @@ function App() {
       alert(`Error submitting transaction: ${error}`)
     }
   };
-
-  console.log(lastTransaction)
 
   return (
     <div>
@@ -65,7 +63,8 @@ function App() {
         </form>
       </div>
       <div>
-        {lastTransaction === null ? <h3>Please Create a Transaction</h3> 
+        <h2>Previous Transaction</h2>
+        {lastTransaction === null ? <h4>Please Create a Transaction</h4> 
           : 
           <div> 
             <h3>Information about your Previous Transaction</h3>
@@ -75,11 +74,31 @@ function App() {
             <p>Merchant: {lastTransaction?.merchant}</p>
             <p>Transaction ID: {lastTransaction?.transaction_id}</p>
             <p>Version: {lastTransaction?.version}</p>
+            <p>Raw Message: {lastTransaction?.raw_message}</p>
           </div>
         }
       </div>
+      <hr />
       <div>
-      <p>{message}</p>
+        <h2>Recorded Transactions</h2>
+        {allTransactions.length === 0 ? <h4>No Transactions Recorded</h4>
+          : 
+          <div>
+            {allTransactions.map((transaction: Transaction) => {
+              return (
+                <div>
+                  <h4>Merchant: {transaction.merchant}</h4>
+                  <p>Amount: {transaction.amount}</p>
+                  <p>Network: {transaction.network}</p>
+                  <p>Descriptor: {transaction.transaction_descriptor}</p>
+                  <p>Transaction ID: {transaction.transaction_id}</p>
+                  <p>Version: {transaction.version}</p>
+                  <p>Raw Message: {transaction.raw_message}</p>
+                </div>
+              )
+            })}
+          </div>
+          }
       </div>
     </div>
   );

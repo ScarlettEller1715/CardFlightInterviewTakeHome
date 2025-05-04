@@ -1,10 +1,13 @@
 class Api::V1::TransactionsController < ApplicationController
+  
   def index
-    render json: { message: "Hello from Rails!" }
+    transactions = Transaction.all
+    render json: transactions
   end
 
   def process_transaction
     input = params[:newTransaction]
+
     unless input.present?
       return render json: { error: "No transaction entered" }, status: :bad_request
     end
@@ -21,8 +24,19 @@ class Api::V1::TransactionsController < ApplicationController
       "amount": "#{transaction_data[:amount]}",
       "network": "#{transaction_data[:network]}",
       "transaction_descriptor": "#{transaction_data[:transaction_descriptor]}",
-      "merchant": "#{transaction_data[:merchant]}"
+      "merchant": "#{transaction_data[:merchant]}",
+      "raw_message": "#{input}"
     }
+
+    Transaction.create!(
+      version: res[:version],
+      transaction_id: res[:transaction_id],
+      amount: res[:amount],
+      network: res[:network],
+      transaction_descriptor: res[:transaction_descriptor],
+      merchant: res[:merchant],
+      raw_message: input
+    )
 
     render json: { last_transaction: res}, status: :ok
   end
