@@ -2,7 +2,7 @@ import './App.css';
 import React, { useEffect, useState } from "react";
 
 type Transaction = {
-  amount: number; 
+  amount: string; 
   network: string;
   transaction_descriptor: string;
   transaction_id: string;
@@ -36,10 +36,16 @@ function App() {
       });
 
       const data = await res.json();
-      setLastTransaction(data.last_transaction)
-      setNewTransaction("")
+
+      if (res.ok) {
+        setLastTransaction(data.last_transaction)
+        setNewTransaction("")
+      } else {
+        alert("Transaction does not follow template specifications, please try again.")
+      }
     } catch (error) {
-      console.error("Error subitting transaction:", error)
+      console.log("hit")
+      alert(`Error submitting transaction: ${error}`)
     }
   };
 
