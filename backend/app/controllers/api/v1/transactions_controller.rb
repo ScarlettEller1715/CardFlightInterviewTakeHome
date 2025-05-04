@@ -18,7 +18,6 @@ class Api::V1::TransactionsController < ApplicationController
     render json: { last_transaction: processed_transaction}, status: :ok
   end
 
-
   private 
 
   def create_transaction(input)
