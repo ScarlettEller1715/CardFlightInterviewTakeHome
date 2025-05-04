@@ -1,11 +1,21 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
 
+type Transaction = {
+  amount: number; 
+  network: string;
+  transaction_descriptor: string;
+  transaction_id: string;
+  version: string; 
+  merchant: string;
+};
+
 function App() {
 
   const [message, setMessage] = useState("")
 
   const [newTransaction, setNewTransaction] = useState("")
+  const [lastTransaction, setLastTransaction] = useState<Transaction | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/v1/transaction")
@@ -26,12 +36,14 @@ function App() {
       });
 
       const data = await res.json();
-      console.log(data)
+      setLastTransaction(data.last_transaction)
       setNewTransaction("")
     } catch (error) {
       console.error("Error subitting transaction:", error)
     }
   };
+
+  console.log(lastTransaction)
 
   return (
     <div>
@@ -45,6 +57,20 @@ function App() {
             />
           <button type="submit">Submit</button>
         </form>
+      </div>
+      <div>
+        {lastTransaction === null ? <h3>Please Create a Transaction</h3> 
+          : 
+          <div> 
+            <h3>Information about your Previous Transaction</h3>
+            <p>Amount: {lastTransaction?.amount}</p>
+            <p>Network: {lastTransaction?.network}</p>
+            <p>Descriptor: {lastTransaction?.transaction_descriptor}</p>
+            <p>Merchant: {lastTransaction?.merchant}</p>
+            <p>Transaction ID: {lastTransaction?.transaction_id}</p>
+            <p>Version: {lastTransaction?.version}</p>
+          </div>
+        }
       </div>
       <div>
       <p>{message}</p>

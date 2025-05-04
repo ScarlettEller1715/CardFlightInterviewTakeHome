@@ -16,7 +16,7 @@ class Api::V1::TransactionsController < ApplicationController
       "merchant": "#{transaction_data[:merchant]}"
     }
 
-    render json: { message: "response: #{res}"}, status: :ok
+    render json: { last_transaction: res}, status: :ok
   end
 
 
