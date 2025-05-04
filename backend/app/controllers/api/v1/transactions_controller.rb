@@ -1,5 +1,5 @@
 class Api::V1::TransactionsController < ApplicationController
-  
+
   def index
     transactions = Transaction.all
     render json: transactions
@@ -8,12 +8,23 @@ class Api::V1::TransactionsController < ApplicationController
   def process_transaction
     input = params[:newTransaction]
 
+    ## Check to ensure input isn't blank
     unless input.present?
       return render json: { error: "No transaction entered" }, status: :bad_request
     end
 
+    processed_transaction = create_transaction(input)
+
+    render json: { last_transaction: processed_transaction}, status: :ok
+  end
+
+
+  private 
+
+  def create_transaction(input)
     transaction_data = parse_transaction_string(input.split(//))
 
+    ## Check to ensure input is valid
     if transaction_data.values_at(:amount, :network, :transaction_descriptor, :merchant).any?(&:blank?)
       return render json: { error: "Transaction Data Not Valid" }, status: :bad_request
     end
@@ -38,11 +49,8 @@ class Api::V1::TransactionsController < ApplicationController
       raw_message: input
     )
 
-    render json: { last_transaction: res}, status: :ok
+    res
   end
-
-
-  private 
 
   def parse_transaction_string(input)
     result = {}
@@ -92,6 +100,4 @@ class Api::V1::TransactionsController < ApplicationController
     descriptor_array.join
   end
 
-
-  ## end of controller
 end
