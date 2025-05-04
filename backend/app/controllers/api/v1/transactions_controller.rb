@@ -5,7 +5,15 @@ class Api::V1::TransactionsController < ApplicationController
 
   def process_transaction
     input = params[:newTransaction]
+    unless input.present?
+      return render json: { error: "No transaction entered" }, status: :bad_request
+    end
+
     transaction_data = parse_transaction_string(input.split(//))
+
+    if transaction_data.values_at(:amount, :network, :transaction_descriptor, :merchant).any?(&:blank?)
+      return render json: { error: "Transaction Data Not Valid" }, status: :bad_request
+    end
 
     res = {
       "version": "0.1",
@@ -31,19 +39,17 @@ class Api::V1::TransactionsController < ApplicationController
       tag = input.slice!(0)
       length = input.slice!(0, 2).join.to_i
 
-      if tag == "1"
+      case tag
+      when "1"
         result[:network] = input.slice!(0, length).join
-      end
-
-      if tag == "2" 
-        result[:amount] = input.slice!(0, length).reject { |x| x == "."}.join
-      end
-
-      if tag == "3"
+        loops -= 1
+      when "2"
+        result[:amount] = input.slice!(0, length).reject { |x| x == "." }.join
+        loops -= 1
+      when "3"
         result[:merchant] = input.slice!(0, length).first(10).join
+        loops -= 1
       end
-
-      loops = loops - 1
     end
 
     transaction_descriptor_data = {
