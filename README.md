@@ -24,16 +24,24 @@ For the frontend, I used React with TypeScript and hooks to manage state. An inp
     - frontend
 
 ## Backend Setup
-1. Navigate to backend
-2. run "bundle install"
-3. run "rails db:create db:migrate"
-4. run "rails server"
-    - Rails should start running on http://localhost:3000
+1. Navigate to the backend directory
+2. Set the following environment variables (replace values as needed):
+    - `export DB_USERNAME=postgres`
+    - `export DB_PASSWORD=yourpassword`
+3. Ensure PostgreSQL is installed and running on your machine
+4. Install dependencies and set up the database:
+    - `bundle install`
+    - `rails db:create db:migrate`
+5. Start the server:
+    - `rails server`
+    - Rails should now be running at http://localhost:3000
+
+The database config (`config/database.yml`) is set to read these environment variables, so credentials are not hardcoded.
 
 ## Frontend Setup
 1. Navigate to frontend
-2. run "npm install"
-3. run "npm run dev"
+2. run `npm install`
+3. run `npm start`
 
 ## Application Workflow
 - The frontend asynchronously pulls any previously recorded transaction objects

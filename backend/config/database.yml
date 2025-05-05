@@ -23,10 +23,9 @@ default: &default
   adapter: postgresql
   encoding: unicode
   host: localhost
-  username: scarletteller
-  password: <%= ENV['DB_PASSWORD'] %>  # if you're using an environment variable for security
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
   pool: 5
-  password: 'fluttershy1'
 
 development:
   <<: *default
