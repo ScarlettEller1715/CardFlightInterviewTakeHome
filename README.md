@@ -26,14 +26,15 @@ For the frontend, I used React with TypeScript and hooks to manage state. An inp
 ## Backend Setup
 1. Navigate to the backend directory
 2. Set the following environment variables (replace values as needed):
-    - `export DB_USERNAME=postgres`
-    - `export DB_PASSWORD=yourpassword`
+    - run `export DB_USERNAME=postgres`
+    - run `export DB_PASSWORD=yourpassword`
 3. Ensure PostgreSQL is installed and running on your machine
 4. Install dependencies and set up the database:
-    - `bundle install`
-    - `rails db:create db:migrate`
+    - If you're on a different OS (e.g., macOS), delete Gemfile.lock to avoid platform-specific gem issues if the file is present.
+        - run `bundle install`
+        - run `rails db:create db:migrate`
 5. Start the server:
-    - `rails server`
+    - run `rails server`
     - Rails should now be running at http://localhost:3000
 
 The database config (`config/database.yml`) is set to read these environment variables, so credentials are not hardcoded.
